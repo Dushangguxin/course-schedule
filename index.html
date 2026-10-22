@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>课程表</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- 顶栏 -->
+  <header class="topbar">
+    <h1 class="title">课程表</h1>
+    <div class="topbar-actions">
+      <button class="text-btn" id="import-btn" type="button">导入</button>
+      <button class="icon-btn" id="settings-btn" type="button" aria-label="设置">⚙️</button>
+    </div>
+  </header>
+  <input type="file" id="import-input" accept=".xls,.xlsx" hidden />
+
+  <!-- 左上角：第几周 · 周几（由 app.js 自动计算） -->
+  <div class="subbar">
+    <div class="week-info">
+      <span class="week" id="week-el">第 ? 周</span>
+      <span class="dot">·</span>
+      <span class="weekday" id="weekday-el">…</span>
+    </div>
+    <span class="date" id="date-el"></span>
+  </div>
+
+  <!-- 课表网格：由 app.js 动态渲染 -->
+  <main class="schedule-wrap">
+    <table class="schedule" id="schedule"></table>
+  </main>
+
+  <!-- 添加课程按钮 -->
+  <button class="fab" id="add-btn" type="button" aria-label="添加课程">+</button>
+
+  <!-- 课程表单弹窗 -->
+  <div class="modal-backdrop" id="modal" hidden>
+    <div class="modal">
+      <h2 id="modal-title">添加课程</h2>
+      <form id="course-form">
+        <label>课程名称
+          <input name="name" required placeholder="例如：高等数学" />
+        </label>
+        <div class="row">
+          <label>授课老师
+            <input name="teacher" placeholder="选填" />
+          </label>
+          <label>上课教室
+            <input name="room" placeholder="选填" />
+          </label>
+        </div>
+        <div class="row">
+          <label>星期几
+            <select name="day"></select>
+          </label>
+          <label>第几节
+            <select name="slot"></select>
+          </label>
+        </div>
+        <label>周次
+          <select name="weekType">
+            <option value="full">全学期（1-20周）</option>
+            <option value="odd">单周</option>
+            <option value="even">双周</option>
+            <option value="custom">自定义</option>
+          </select>
+        </label>
+        <div class="row" id="custom-weeks" hidden>
+          <label>起始周
+            <input name="weekStart" type="number" min="1" max="20" value="1" />
+          </label>
+          <label>结束周
+            <input name="weekEnd" type="number" min="1" max="20" value="16" />
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-danger" id="delete-btn" hidden>删除</button>
+          <button type="button" class="btn-plain" id="cancel-btn">取消</button>
+          <button type="submit" class="btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 设置弹窗 -->
+  <div class="modal-backdrop" id="settings-modal" hidden>
+    <div class="modal">
+      <h2>设置</h2>
+      <form id="settings-form">
+        <label>开学日期（本学期第一天）
+          <input name="termStart" type="date" required />
+        </label>
+        <p class="hint">设置后会自动计算「第几周」，并正确显示单双周课程。</p>
+        <div class="slot-heading">作息时间（可微调）</div>
+        <div id="slot-editor" class="slot-editor"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn-plain" id="settings-cancel">取消</button>
+          <button type="submit" class="btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 课程详情弹窗（点击课程展开） -->
+  <div class="modal-backdrop" id="detail-modal" hidden>
+    <div class="modal">
+      <h2 id="detail-title">课程</h2>
+      <div id="detail-list" class="detail-list"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn-plain" id="detail-add">＋ 添加课程</button>
+        <button type="button" class="btn-primary" id="detail-close">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="xlsx.full.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
