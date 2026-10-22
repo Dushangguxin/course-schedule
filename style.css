@@ -1,0 +1,478 @@
+/* 配色：见 docs/03-设计规范.md 的淡蓝色规范 */
+:root {
+  --bg: #ffffff;
+  --header-bg: #e3f2fd;
+  --today-bg: #bbdefb;
+  --now-bg: #90caf9;
+  --accent: #1e88e5;
+  --card-text: #333333;
+  --muted: #757575;
+  --border: #e0e0e0;
+  --danger: #e53935;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--card-text);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  padding-bottom: 72px;
+}
+
+/* 顶栏 */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--header-bg);
+}
+
+.topbar .title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.icon-btn {
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 4px;
+}
+
+/* 左上角：第几周 · 周几 */
+.subbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.week-info {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.week-info .dot {
+  margin: 0 6px;
+  color: var(--muted);
+}
+
+.date {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* 课表网格：横向可滚动 */
+.schedule-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.schedule {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+
+.schedule th {
+  padding: 10px 6px;
+  background: var(--header-bg);
+  font-size: 14px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  min-width: 112px;
+}
+
+.schedule th.corner {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  min-width: 66px;
+  width: 66px;
+}
+
+.schedule th.today {
+  background: var(--today-bg);
+  color: var(--accent);
+}
+
+.schedule th .badge {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 1px 5px;
+  font-size: 10px;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 8px;
+  vertical-align: 1px;
+}
+
+/* 时间段（左列，随横向滚动固定） */
+.schedule td.time {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--bg);
+  width: 66px;
+  min-width: 66px;
+  padding: 8px 2px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 11px;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+.slot-no {
+  display: block;
+  font-size: 10px;
+  margin-bottom: 2px;
+}
+
+.slot-range {
+  display: block;
+  line-height: 1.3;
+}
+
+/* 每一天的格子 */
+.schedule td {
+  height: 96px;
+  min-width: 112px;
+  padding: 6px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+.schedule td[data-day] {
+  cursor: pointer;
+}
+
+.schedule td[data-day]:hover {
+  background: #f5faff;
+}
+
+.schedule td.today-col {
+  background: var(--today-bg);
+}
+
+.schedule td.today-col:hover {
+  background: #d6e9fa;
+}
+
+/* 课程卡片（紧凑：课程名 + 上课地点） */
+.course {
+  background: #fff;
+  border: 1px solid var(--accent);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 3px 6px;
+  cursor: pointer;
+  margin-bottom: 3px;
+  overflow: hidden;
+}
+
+.course-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--card-text);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.course-room {
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 折叠的「+N」按钮 */
+.more {
+  font-size: 11px;
+  color: var(--accent);
+  background: var(--header-bg);
+  border-radius: 6px;
+  padding: 5px 8px;
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+/* 周次标签（用于详情弹窗） */
+.tag {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 0 6px;
+  font-size: 10px;
+  color: var(--accent);
+  background: var(--header-bg);
+  border-radius: 4px;
+}
+
+/* 添加课程悬浮按钮 */
+.fab {
+  position: fixed;
+  right: 16px;
+  bottom: 20px;
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(30, 136, 229, 0.4);
+  z-index: 5;
+}
+
+/* 弹窗 */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 10;
+}
+
+.modal-backdrop[hidden] {
+  display: none;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  width: 100%;
+  max-width: 360px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.modal h2 {
+  font-size: 18px;
+  margin-bottom: 12px;
+  color: var(--accent);
+}
+
+.modal label {
+  display: block;
+  font-size: 13px;
+  color: var(--card-text);
+  margin-bottom: 10px;
+}
+
+.modal input,
+.modal select {
+  width: 100%;
+  margin-top: 4px;
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+}
+
+.modal .row {
+  display: flex;
+  gap: 10px;
+}
+
+.modal .row > * {
+  flex: 1;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.modal-actions button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-plain {
+  background: var(--header-bg);
+  color: var(--accent);
+}
+
+.btn-danger {
+  background: #fff;
+  color: var(--danger);
+  border: 1px solid var(--danger) !important;
+}
+
+/* 当前时间段高亮 */
+.schedule td.time.now {
+  background: var(--now-bg);
+}
+
+.now-badge {
+  display: block;
+  margin-top: 2px;
+  font-size: 9px;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 8px;
+  padding: 1px 4px;
+}
+
+.schedule td.now {
+  background: var(--now-bg);
+}
+
+/* 弹窗提示文字 */
+.modal .hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin: -2px 0 12px;
+}
+
+/* 顶栏操作按钮 */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.text-btn {
+  border: 1px solid var(--accent);
+  background: #fff;
+  color: var(--accent);
+  font-size: 14px;
+  padding: 5px 12px;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+/* 课程详情弹窗 */
+.detail-list {
+  margin-bottom: 4px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.detail-item {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.detail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.detail-name {
+  font-weight: 700;
+}
+
+.detail-meta {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--muted);
+  word-break: break-all;
+}
+
+.mini-btn {
+  border: 1px solid var(--accent);
+  background: #fff;
+  color: var(--accent);
+  font-size: 12px;
+  padding: 2px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.detail-empty {
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+  padding: 16px 0;
+}
+
+/* 设置里的作息时间编辑 */
+.slot-heading {
+  font-size: 13px;
+  color: var(--card-text);
+  margin-bottom: 8px;
+}
+
+.slot-editor {
+  margin-bottom: 4px;
+}
+
+.slot-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.slot-label {
+  width: 40px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.slot-row input[type="time"] {
+  flex: 1;
+  margin-top: 0;
+  padding: 6px 8px;
+  font-size: 13px;
+}
+
+.slot-sep {
+  color: var(--muted);
+}
